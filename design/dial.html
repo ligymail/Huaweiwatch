@@ -4,81 +4,25 @@
 <meta charset="utf-8" />
 <title>dial</title>
 <style>
-  @font-face { font-family: "DialHan"; src: url("file:///tmp/fonts/NotoSansSC-Regular.otf") format("opentype"); font-weight: 400; }
   @font-face { font-family: "DialHan"; src: url("file:///tmp/fonts/NotoSansSC-Medium.otf") format("opentype"); font-weight: 500; }
+  @font-face { font-family: "DialHan"; src: url("file:///tmp/fonts/NotoSansSC-Regular.otf") format("opentype"); font-weight: 400; }
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  html, body { width: 454px; height: 454px; overflow: hidden; background: #000; }
-  svg { display: block; width: 454px; height: 454px; }
+  html, body { background: #000; overflow: hidden; }
 </style>
 </head>
 <body>
 <div id="root"></div>
+<script src="dial.js"></script>
 <script>
-  const THEMES = {
-    day: { bg: "#F6F3ED", fg: "#1C1C1C", tick: "rgba(28,28,28,0.34)", heart: "#C4473A", hand: "#171717", inlay: "#F6F3ED", divider: "rgba(28,28,28,0.4)" },
-    night: { bg: "#000000", fg: "#F4F1EA", tick: "rgba(244,241,234,0.40)", heart: "#FF8B82", hand: "#F4F1EA", inlay: "#000000", divider: "rgba(244,241,234,0.45)" }
-  };
-  const CX = 227, CY = 227;
-
-  function ticks(t) {
-    let out = "";
-    for (let i = 0; i < 60; i++) {
-      const rad = (i * 6 * Math.PI) / 180;
-      const cardinal = i % 15 === 0, hour = i % 5 === 0;
-      const outer = 216, inner = cardinal ? 192 : hour ? 200 : 208;
-      const sw = cardinal ? 3 : hour ? 2.15 : 1.15;
-      const color = hour ? t.fg : t.tick;
-      out += `<line x1="${(CX + Math.sin(rad) * inner).toFixed(2)}" y1="${(CY - Math.cos(rad) * inner).toFixed(2)}" x2="${(CX + Math.sin(rad) * outer).toFixed(2)}" y2="${(CY - Math.cos(rad) * outer).toFixed(2)}" stroke="${color}" stroke-width="${sw}" stroke-linecap="round"/>`;
-    }
-    return out;
-  }
-
-  function hands(t, aH, aM) {
-    return `
-      <g transform="rotate(${aM} ${CX} ${CY})">
-        <polygon points="${CX},${CY - 176} ${CX + 5.2},${CY - 18} ${CX + 3},${CY + 34} ${CX - 3},${CY + 34} ${CX - 5.2},${CY - 18}" fill="${t.hand}"/>
-        <polygon points="${CX},${CY - 148} ${CX + 1.5},${CY - 40} ${CX - 1.5},${CY - 40}" fill="${t.inlay}"/>
-      </g>
-      <g transform="rotate(${aH} ${CX} ${CY})">
-        <polygon points="${CX},${CY - 124} ${CX + 8},${CY - 18} ${CX + 4.6},${CY + 30} ${CX - 4.6},${CY + 30} ${CX - 8},${CY - 18}" fill="${t.hand}"/>
-        <polygon points="${CX},${CY - 102} ${CX + 2.1},${CY - 36} ${CX - 2.1},${CY - 36}" fill="${t.inlay}"/>
-      </g>
-      <circle cx="${CX}" cy="${CY}" r="9.5" fill="${t.hand}"/>
-      <circle cx="${CX}" cy="${CY}" r="3.6" fill="${t.inlay}"/>`;
-  }
-
-  const footprint = (c) => `
-    <g fill="${c}">
-      <ellipse cx="7.15" cy="16.15" rx="3.05" ry="4.85" transform="rotate(-16 7.15 16.15)"/>
-      <circle cx="4.15" cy="8.55" r="1.42"/><circle cx="6.55" cy="7.15" r="1.42"/><circle cx="8.95" cy="8.05" r="1.28"/>
-      <ellipse cx="16.55" cy="15.35" rx="3.05" ry="4.85" transform="rotate(14 16.55 15.35)"/>
-      <circle cx="13.7" cy="7.55" r="1.42"/><circle cx="16.15" cy="6.25" r="1.42"/><circle cx="18.55" cy="7.45" r="1.28"/>
-    </g>`;
-
-  const heart = (c) => `
-    <path fill="${c}" d="M12 20.15s-6.55-4.05-6.55-8.95c0-2.28 1.78-4.05 3.95-4.05 1.22 0 2.3.56 2.98 1.48.68-.92 1.76-1.48 2.98-1.48 2.17 0 3.95 1.77 3.95 4.05 0 4.9-6.55 8.95-6.55 8.95z"/>`;
-
-  const icon = (x, y, s, body) => `<svg x="${x}" y="${y}" width="${s}" height="${s}" viewBox="0 0 24 24">${body}</svg>`;
-
-  function dial(key) {
-    const t = THEMES[key];
-    const colL = 152, colR = 302, iconSize = 34, iconY = 286, numY = 362;
-    return `
-      <svg xmlns="http://www.w3.org/2000/svg" width="454" height="454" viewBox="0 0 454 454">
-        <circle cx="${CX}" cy="${CY}" r="227" fill="${t.bg}"/>
-        ${ticks(t)}
-        <text x="204" y="112" text-anchor="end" fill="${t.fg}" font-family="DialHan, sans-serif" font-size="28" font-weight="500">周二</text>
-        <line x1="227" y1="90" x2="227" y2="114" stroke="${t.divider}" stroke-width="1.25" stroke-linecap="round"/>
-        <text x="250" y="112" text-anchor="start" fill="${t.fg}" font-family="DialHan, sans-serif" font-size="28" font-weight="500" letter-spacing="0.5">11/03</text>
-        ${icon(colL - iconSize / 2, iconY, iconSize, footprint(t.fg))}
-        ${icon(colR - iconSize / 2, iconY, iconSize, heart(t.heart))}
-        <text x="${colL}" y="${numY}" text-anchor="middle" fill="${t.fg}" font-family="DialHan, sans-serif" font-size="32" font-weight="500">8432</text>
-        <text x="${colR}" y="${numY}" text-anchor="middle" fill="${t.fg}" font-family="DialHan, sans-serif" font-size="32" font-weight="500">72</text>
-        ${hands(t, 305, 60)}
-      </svg>`;
-  }
-
-  document.getElementById("root").innerHTML = dial(location.hash.replace("#", "") || "day");
+  var key = location.hash.replace("#", "") || "day";
+  renderWatchFace(document.getElementById("root"), key, {
+    hour: 10,
+    minute: 10,
+    date: "2026/11/03",
+    weekday: "周二",
+    steps: "8432",
+    bpm: "72"
+  });
 </script>
 </body>
 </html>
