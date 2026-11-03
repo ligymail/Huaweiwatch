@@ -95,7 +95,7 @@
     return (
       '<div style="position:absolute;left:0;right:0;top:86px;height:34px;' +
       "display:flex;align-items:center;justify-content:center;gap:14px;" +
-      "font-family:DialHan,'Noto Sans',sans-serif;font-size:26px;font-weight:500;" +
+      "font-family:DialHan,'Noto Sans',sans-serif;font-size:28px;font-weight:500;" +
       "font-variant-numeric:tabular-nums;color:" + t.fg + '">' +
       "<span>" + date + "</span>" +
       '<i style="display:block;width:1px;height:22px;background:' + t.rule + '"></i>' +
