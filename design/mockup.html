@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<title>WATCH GT 2 Pro 表盘效果图</title>
+<style>
+  @font-face {
+    font-family: "DialHan";
+    src: url("file:///tmp/fonts/NotoSansSC-Regular.otf") format("opentype");
+    font-weight: 400;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: "DialHan";
+    src: url("file:///tmp/fonts/NotoSansSC-Medium.otf") format("opentype");
+    font-weight: 500;
+    font-style: normal;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    width: 1440px;
+    height: 900px;
+    overflow: hidden;
+    background: #141414;
+    color: #f3f0e8;
+    font-family: "DialHan", "Noto Sans", "WenQuanYi Micro Hei", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .poster {
+    width: 1440px;
+    height: 900px;
+    display: grid;
+    grid-template-rows: 92px 1fr 78px;
+  }
+
+  header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding: 28px 56px 16px;
+  }
+
+  header h1 {
+    font-size: 22px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+  }
+
+  header p {
+    margin-top: 4px;
+    font-size: 13px;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    color: #b7b2a8;
+  }
+
+  header .meta {
+    text-align: right;
+    font-size: 13px;
+    color: #b7b2a8;
+    letter-spacing: 0.06em;
+    line-height: 1.55;
+  }
+
+  .stage {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: 0;
+  }
+
+  .pane {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 22px;
+  }
+
+  .pane.day { background: #e6e1d8; color: #1a1a1a; }
+  .pane.night { background: #101010; color: #f3f0e8; }
+
+  .case {
+    width: 488px;
+    height: 488px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+  }
+
+  .pane.day .case { background: #2a2c2e; }
+  .pane.night .case { background: #3a3c3e; }
+
+  .dial {
+    width: 454px;
+    height: 454px;
+    border-radius: 50%;
+    overflow: hidden;
+  }
+
+  .dial svg { display: block; width: 454px; height: 454px; }
+
+  .caption { text-align: center; }
+  .caption strong {
+    display: block;
+    font-size: 18px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+  }
+  .caption span {
+    display: block;
+    margin-top: 4px;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    opacity: 0.72;
+  }
+
+  footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 28px;
+    padding: 0 48px;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    color: #c8c3b8;
+  }
+
+  footer b {
+    font-weight: 500;
+    color: #f3f0e8;
+  }
+
+  footer i {
+    font-style: normal;
+    color: #5c5a56;
+  }
+</style>
+</head>
+<body>
+  <div class="poster">
+    <header>
+      <div>
+        <h1>WATCH GT 2 Pro</h1>
+        <p>模拟表盘效果图 · 圆形 454 × 454 · 无秒针</p>
+      </div>
+      <div class="meta">
+        上半区 · 日期 / 星期<br />
+        下半区 · 步数 / 心率
+      </div>
+    </header>
+
+    <div class="stage">
+      <section class="pane day">
+        <div class="case"><div class="dial" id="day"></div></div>
+        <div class="caption">
+          <strong>白天</strong>
+          <span>06:00 – 18:00 · 浅色底 · 深色内容</span>
+        </div>
+      </section>
+      <section class="pane night">
+        <div class="case"><div class="dial" id="night"></div></div>
+        <div class="caption">
+          <strong>夜晚</strong>
+          <span>18:00 – 06:00 · 黑色底 · 浅色内容</span>
+        </div>
+      </section>
+    </div>
+
+    <footer>
+      <span><b>10:10 / 22:10</b> 同一指针角度，用于对照两种底色</span>
+      <i>|</i>
+      <span>日期与星期在表盘上半区</span>
+      <i>|</i>
+      <span>步数在左、心率在右，图标在上、数字在下，左右对齐</span>
+    </footer>
+  </div>
+
+  <script>
+    const THEMES = {
+      day: {
+        bg: "#F6F3ED",
+        fg: "#1C1C1C",
+        tick: "rgba(28,28,28,0.34)",
+        heart: "#C4473A",
+        hand: "#171717",
+        inlay: "#F6F3ED",
+        divider: "rgba(28,28,28,0.4)"
+      },
+      night: {
+        bg: "#000000",
+        fg: "#F4F1EA",
+        tick: "rgba(244,241,234,0.40)",
+        heart: "#FF8B82",
+        hand: "#F4F1EA",
+        inlay: "#000000",
+        divider: "rgba(244,241,234,0.45)"
+      }
+    };
+
+    const CX = 227;
+    const CY = 227;
+
+    function ticks(theme) {
+      let out = "";
+      for (let i = 0; i < 60; i++) {
+        const rad = (i * 6 * Math.PI) / 180;
+        const cardinal = i % 15 === 0;
+        const hour = i % 5 === 0;
+        const outer = 216;
+        const inner = cardinal ? 192 : hour ? 200 : 208;
+        const sw = cardinal ? 3 : hour ? 2.15 : 1.15;
+        const color = hour ? theme.fg : theme.tick;
+        const x1 = CX + Math.sin(rad) * inner;
+        const y1 = CY - Math.cos(rad) * inner;
+        const x2 = CX + Math.sin(rad) * outer;
+        const y2 = CY - Math.cos(rad) * outer;
+        out += `<line x1="${x1.toFixed(2)}" y1="${y1.toFixed(2)}" x2="${x2.toFixed(2)}" y2="${y2.toFixed(2)}" stroke="${color}" stroke-width="${sw}" stroke-linecap="round"/>`;
+      }
+      return out;
+    }
+
+    function hands(theme, angleHour, angleMinute) {
+      const hour = `
+        <g transform="rotate(${angleHour} ${CX} ${CY})">
+          <polygon points="${CX},${CY - 124} ${CX + 8},${CY - 18} ${CX + 4.6},${CY + 30} ${CX - 4.6},${CY + 30} ${CX - 8},${CY - 18}" fill="${theme.hand}"/>
+          <polygon points="${CX},${CY - 102} ${CX + 2.1},${CY - 36} ${CX - 2.1},${CY - 36}" fill="${theme.inlay}"/>
+        </g>`;
+      const minute = `
+        <g transform="rotate(${angleMinute} ${CX} ${CY})">
+          <polygon points="${CX},${CY - 176} ${CX + 5.2},${CY - 18} ${CX + 3},${CY + 34} ${CX - 3},${CY + 34} ${CX - 5.2},${CY - 18}" fill="${theme.hand}"/>
+          <polygon points="${CX},${CY - 148} ${CX + 1.5},${CY - 40} ${CX - 1.5},${CY - 40}" fill="${theme.inlay}"/>
+        </g>`;
+      const hub = `
+        <circle cx="${CX}" cy="${CY}" r="9.5" fill="${theme.hand}"/>
+        <circle cx="${CX}" cy="${CY}" r="3.6" fill="${theme.inlay}"/>`;
+      return minute + hour + hub;
+    }
+
+    const footprint = (color) => `
+      <g fill="${color}">
+        <ellipse cx="7.15" cy="16.15" rx="3.05" ry="4.85" transform="rotate(-16 7.15 16.15)"/>
+        <circle cx="4.15" cy="8.55" r="1.42"/>
+        <circle cx="6.55" cy="7.15" r="1.42"/>
+        <circle cx="8.95" cy="8.05" r="1.28"/>
+        <ellipse cx="16.55" cy="15.35" rx="3.05" ry="4.85" transform="rotate(14 16.55 15.35)"/>
+        <circle cx="13.7" cy="7.55" r="1.42"/>
+        <circle cx="16.15" cy="6.25" r="1.42"/>
+        <circle cx="18.55" cy="7.45" r="1.28"/>
+      </g>`;
+
+    const heart = (color) => `
+      <path fill="${color}" d="M12 20.15s-6.55-4.05-6.55-8.95c0-2.28 1.78-4.05 3.95-4.05 1.22 0 2.3.56 2.98 1.48.68-.92 1.76-1.48 2.98-1.48 2.17 0 3.95 1.77 3.95 4.05 0 4.9-6.55 8.95-6.55 8.95z"/>`;
+
+    function icon(x, y, size, body) {
+      return `<svg x="${x}" y="${y}" width="${size}" height="${size}" viewBox="0 0 24 24">${body}</svg>`;
+    }
+
+    function dial(theme) {
+      const colL = 152;
+      const colR = 302;
+      const iconSize = 34;
+      const iconY = 286;
+      const numY = 362;
+
+      return `
+        <svg xmlns="http://www.w3.org/2000/svg" width="454" height="454" viewBox="0 0 454 454">
+          <circle cx="${CX}" cy="${CY}" r="227" fill="${theme.bg}"/>
+          ${ticks(theme)}
+          <text x="204" y="112" text-anchor="end" fill="${theme.fg}" font-family="DialHan, sans-serif" font-size="28" font-weight="500">周二</text>
+          <line x1="227" y1="90" x2="227" y2="114" stroke="${theme.divider}" stroke-width="1.25" stroke-linecap="round"/>
+          <text x="250" y="112" text-anchor="start" fill="${theme.fg}" font-family="DialHan, sans-serif" font-size="28" font-weight="500" letter-spacing="0.5">11/03</text>
+          ${icon(colL - iconSize / 2, iconY, iconSize, footprint(theme.fg))}
+          ${icon(colR - iconSize / 2, iconY, iconSize, heart(theme.heart))}
+          <text x="${colL}" y="${numY}" text-anchor="middle" fill="${theme.fg}" font-family="DialHan, sans-serif" font-size="32" font-weight="500">8432</text>
+          <text x="${colR}" y="${numY}" text-anchor="middle" fill="${theme.fg}" font-family="DialHan, sans-serif" font-size="32" font-weight="500">72</text>
+          ${hands(theme, 305, 60)}
+        </svg>`;
+    }
+
+    document.getElementById("day").innerHTML = dial(THEMES.day);
+    document.getElementById("night").innerHTML = dial(THEMES.night);
+  </script>
+</body>
+</html>
