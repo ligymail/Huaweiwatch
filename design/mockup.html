@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<title>WATCH GT 2 Pro 表盘效果图</title>
+<style>
+  @font-face { font-family: "DialHan"; src: url("file:///tmp/fonts/NotoSansSC-Medium.otf") format("opentype"); font-weight: 500; }
+  @font-face { font-family: "DialHan"; src: url("file:///tmp/fonts/NotoSansSC-Regular.otf") format("opentype"); font-weight: 400; }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    width: 1440px;
+    height: 900px;
+    overflow: hidden;
+    background: #141414;
+    color: #f3f0e8;
+    font-family: "DialHan", "Noto Sans", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .poster {
+    width: 1440px;
+    height: 900px;
+    display: grid;
+    grid-template-rows: 96px 1fr 76px;
+  }
+
+  header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding: 28px 56px 14px;
+  }
+
+  header h1 { font-size: 22px; font-weight: 500; letter-spacing: 0.08em; }
+  header p { margin-top: 4px; font-size: 13px; letter-spacing: 0.04em; color: #b7b2a8; }
+  header .meta {
+    text-align: right;
+    font-size: 13px;
+    color: #b7b2a8;
+    letter-spacing: 0.06em;
+    line-height: 1.55;
+  }
+
+  .stage { display: grid; grid-template-columns: 1fr 1fr; min-height: 0; }
+
+  .pane {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+  }
+
+  .pane.day { background: #e6e1d8; color: #1a1a1a; }
+  .pane.night { background: #101010; color: #f3f0e8; }
+
+  .case {
+    width: 484px;
+    height: 484px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    transform: scale(0.98);
+  }
+
+  .pane.day .case { background: #2a2c2e; }
+  .pane.night .case { background: #3a3c3e; }
+
+  .case > div { border-radius: 50%; overflow: hidden; }
+
+  .caption { text-align: center; }
+  .caption strong { display: block; font-size: 18px; font-weight: 500; letter-spacing: 0.12em; }
+  .caption span { display: block; margin-top: 4px; font-size: 13px; letter-spacing: 0.08em; opacity: 0.72; }
+
+  footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 26px;
+    padding: 0 48px;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    color: #c8c3b8;
+  }
+
+  footer b { font-weight: 500; color: #f3f0e8; }
+  footer i { font-style: normal; color: #5c5a56; }
+</style>
+</head>
+<body>
+  <div class="poster">
+    <header>
+      <div>
+        <h1>WATCH GT 2 Pro</h1>
+        <p>模拟表盘效果图 · 圆形 454 × 454 · 无秒针</p>
+      </div>
+      <div class="meta">
+        上半区 · 左日期（含年）/ 右星期<br />
+        下半区 · 左步数 / 右心率
+      </div>
+    </header>
+
+    <div class="stage">
+      <section class="pane day">
+        <div class="case" id="case-day"></div>
+        <div class="caption">
+          <strong>白天</strong>
+          <span>06:00 – 18:00 · 浅色底 · 深色内容</span>
+        </div>
+      </section>
+      <section class="pane night">
+        <div class="case" id="case-night"></div>
+        <div class="caption">
+          <strong>夜晚</strong>
+          <span>18:00 – 06:00 · 黑色底 · 浅色内容</span>
+        </div>
+      </section>
+    </div>
+
+    <footer>
+      <span><b>10:10 / 22:10</b> 同一指针角度，用于对照两种底色</span>
+      <i>|</i>
+      <span>日期在左、星期在右</span>
+      <i>|</i>
+      <span>图标在上、数字在下，左右两列对齐</span>
+    </footer>
+  </div>
+
+  <script src="dial.js"></script>
+  <script>
+    var data = { hour: 10, minute: 10, date: "11/03", weekday: "周二", steps: "8432", bpm: "72" };
+    renderWatchFace(document.getElementById("case-day"), "day", data);
+    renderWatchFace(document.getElementById("case-night"), "night", data);
+  </script>
+</body>
+</html>

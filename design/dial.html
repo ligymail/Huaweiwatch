@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<title>dial</title>
+<style>
+  @font-face { font-family: "DialHan"; src: url("file:///tmp/fonts/NotoSansSC-Medium.otf") format("opentype"); font-weight: 500; }
+  @font-face { font-family: "DialHan"; src: url("file:///tmp/fonts/NotoSansSC-Regular.otf") format("opentype"); font-weight: 400; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { background: #000; overflow: hidden; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script src="dial.js"></script>
+<script>
+  var key = location.hash.replace("#", "") || "day";
+  renderWatchFace(document.getElementById("root"), key, {
+    hour: 10,
+    minute: 10,
+    date: "11/03",
+    weekday: "周二",
+    steps: "8432",
+    bpm: "72"
+  });
+</script>
+</body>
+</html>
